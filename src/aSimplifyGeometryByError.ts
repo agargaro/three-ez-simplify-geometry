@@ -1,5 +1,5 @@
 import { BufferGeometry } from 'three';
-import { simplifyGeometry } from './SimplifyGeometry.js';
+import { simplifyGeometry } from './aSimplifyGeometry.js';
 
 export async function simplifyGeometryByError(geometry: BufferGeometry, appearanceError: number): Promise<BufferGeometry> {
   return simplifyGeometry(geometry, { ratio: 0, error: appearanceError });
