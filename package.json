@@ -39,6 +39,7 @@
   "devDependencies": {
     "@eslint/js": "^9.27.0",
     "@stylistic/eslint-plugin": "^4.4.0",
+    "@three.ez/batched-mesh-extensions": "^0.0.8",
     "@three.ez/main": "^0.5.10",
     "@tweakpane/core": "^2.0.5",
     "@types/three": "^0.176.0",

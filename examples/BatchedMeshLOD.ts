@@ -1,9 +1,10 @@
 import { createRadixSort, extendBatchedMeshPrototype, getBatchedMeshLODCount } from '@three.ez/batched-mesh-extensions';
 import { Main, PerspectiveCameraAuto } from '@three.ez/main';
+import { performanceRangeLOD, simplifyGeometriesByErrorLOD } from '@three.ez/simplify-geometry';
 import { AmbientLight, BatchedMesh, Color, DirectionalLight, Fog, Matrix4, MeshStandardMaterial, Quaternion, Scene, TorusKnotGeometry, Vector3, WebGLCoordinateSystem } from 'three';
 import { MapControls } from 'three/examples/jsm/Addons.js';
-import { simplifyGeometriesByAppearanceLOD } from '../src/simplify/simplifyGeometryByAppearanceLOD.js';
 
+// EXTEND BATCHEDMESH PROTOTYPE
 extendBatchedMeshPrototype();
 
 const instancesCount = 500000;
@@ -31,13 +32,12 @@ const geometries = [
 
 // CREATE SIMPLIFIED GEOMETRIES
 
-const geometriesLODArray = await simplifyGeometriesByAppearanceLOD(geometries, 4);
+const geometriesLODArray = await simplifyGeometriesByErrorLOD(geometries, 4, performanceRangeLOD);
 
 // CREATE BATCHED MESH
 
 const { vertexCount, indexCount, LODIndexCount } = getBatchedMeshLODCount(geometriesLODArray);
 const batchedMesh = new BatchedMesh(instancesCount, vertexCount, indexCount, new MeshStandardMaterial({ metalness: 0.2, roughness: 0.2 }));
-batchedMesh.sortObjects = true;
 batchedMesh.customSort = createRadixSort(batchedMesh);
 
 // ADD GEOMETRIES AND LODS

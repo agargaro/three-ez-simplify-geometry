@@ -1,11 +1,11 @@
 import { BufferGeometry } from 'three';
 import { simplifyGeometryByError } from './SimplifyGeometryByError.js';
 
-// export const performanceLOD = [0.005, 0.012, 0.04, 0.08];
-export const balancedLOD = [0.005, 0.01, 0.04, 0.08];
-// export const qualityLOD = [0.003, 0.008, 0.03, 0.08];
+export const performanceRangeLOD = [0.01, 0.02, 0.05, 0.1];
+export const balancedRangeLOD = [0.007, 0.015, 0.04, 0.08];
+export const qualityRangeLOD = [0.004, 0.01, 0.035, 0.07];
 
-export async function simplifyGeometryByErrorLOD(geometry: BufferGeometry, LODCount: number, range = balancedLOD): Promise<BufferGeometry[]> {
+export async function simplifyGeometryByErrorLOD(geometry: BufferGeometry, LODCount: number, range = balancedRangeLOD): Promise<BufferGeometry[]> {
   const geometries: BufferGeometry[] = [geometry];
 
   for (let i = 0; i < LODCount; i++) {
@@ -15,7 +15,7 @@ export async function simplifyGeometryByErrorLOD(geometry: BufferGeometry, LODCo
   return geometries;
 }
 
-export async function simplifyGeometriesByErrorLOD(geometries: BufferGeometry[], LODCounts: number | number[], ranges: number[] | number[][] = balancedLOD): Promise<BufferGeometry[][]> {
+export async function simplifyGeometriesByErrorLOD(geometries: BufferGeometry[], LODCounts: number | number[], ranges: number[] | number[][] = balancedRangeLOD): Promise<BufferGeometry[][]> {
   const result: BufferGeometry[][] = [];
 
   for (let i = 0; i < geometries.length; i++) {
