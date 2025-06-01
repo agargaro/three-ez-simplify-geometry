@@ -1,6 +1,6 @@
 import { BufferGeometry } from 'three';
-import { SimplifyParams } from './simplify.js';
-import { simplifyGeometry } from './simplifyGeometry.js';
+import { SimplifyParams } from './Simplify.js';
+import { simplifyGeometry } from './SimplifyGeometry.js';
 
 export async function simplifyGeometryLOD(geometry: BufferGeometry, paramsList: SimplifyParams[]): Promise<BufferGeometry[]> {
   const result: BufferGeometry[] = [geometry];

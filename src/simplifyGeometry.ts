@@ -1,5 +1,5 @@
 import { BufferAttribute, BufferGeometry } from 'three';
-import { simplify, SimplifyParams } from './simplify.js';
+import { simplify, SimplifyParams } from './Simplify.js';
 
 export async function simplifyGeometry(geometry: BufferGeometry, params: SimplifyParams): Promise<BufferGeometry> {
   if (!geometry.index) throw new Error('simplifyGeometry: non-indexed geometries are not currently supported.');
@@ -16,13 +16,12 @@ export async function simplifyGeometry(geometry: BufferGeometry, params: Simplif
 }
 
 export async function simplifyGeometries(geometries: BufferGeometry[], paramsList: SimplifyParams | SimplifyParams[]): Promise<BufferGeometry[]> {
-  const result: BufferGeometry[] = [];
+  const promises: Promise<BufferGeometry>[] = new Array(geometries.length);
 
   for (let i = 0; i < geometries.length; i++) {
-    const geometry = geometries[i];
     const params = Array.isArray(paramsList) ? paramsList[i] : paramsList;
-    result.push(await simplifyGeometry(geometry, params));
+    promises[i] = simplifyGeometry(geometries[i], params);
   }
 
-  return result;
+  return await Promise.all(promises);
 }

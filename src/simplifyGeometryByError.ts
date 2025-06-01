@@ -1,9 +1,9 @@
 import { BufferAttribute, BufferGeometry } from 'three';
-import { simplify, SimplifyParams } from './simplify.js';
+import { simplify, SimplifyParams } from './Simplify.js';
 
 export type SimplifyGeometryAuto = { geometry: BufferGeometry; ratio: number; appearanceError: number };
 
-export async function simplifyGeometryByAppearance(geometry: BufferGeometry, appearance: number, start: number, min = 0, threshold = 0.01, maxIteration = 12): Promise<SimplifyGeometryAuto> {
+export async function simplifyGeometryByError(geometry: BufferGeometry, appearance: number, start: number, min = 0, threshold = 0.01, maxIteration = 12): Promise<SimplifyGeometryAuto> {
   if (!geometry.index) throw new Error('simplifyGeometry: non-indexed geometries are not currently supported.');
   if (geometry.groups.length > 0) throw new Error('simplifyGeometry: geometry groups are not currently supported.');
 

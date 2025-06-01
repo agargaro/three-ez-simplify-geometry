@@ -26,14 +26,19 @@ export async function simplify(srcIndexArray: Uint32Array, srcPositionArray: Flo
   const targetCount = 3 * Math.floor(params.ratio * (srcIndexArray.length / 3));
 
   const result: SimplifyResult = MeshoptSimplifier.simplify(srcIndexArray, srcPositionArray, 3, targetCount, error, flags);
+  const dstIndexArray = result[0];
+
+  if (dstIndexArray.length === srcIndexArray.length) {
+    console.error('Simplify: simplification failed');
+  }
 
   if (params.logAppearanceError) {
-    console.log(`Simplify: appearance error: ${result[1]}`);
+    const appearanceError = result[1];
+    console.log(`Simplify: appearance error: ${appearanceError}`);
   }
 
   const verticesCount = srcPositionArray.length / 3;
   if (params.optimizeMemory && verticesCount <= 65535) {
-    const dstIndexArray = result[0];
     result[0] = verticesCount <= 255 ? new Uint8Array(dstIndexArray.length) : new Uint16Array(dstIndexArray.length);
     result[0].set(dstIndexArray);
   }

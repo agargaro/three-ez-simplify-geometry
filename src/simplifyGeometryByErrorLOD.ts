@@ -1,5 +1,5 @@
 import { BufferGeometry } from 'three';
-import { simplifyGeometryByAppearance } from './simplifyGeometryByAppearance.js';
+import { simplifyGeometryByError } from './SimplifyGeometryByError.js';
 
 // TODO make more range preset // export const defaultRange = [0.01, 0.02, 0.04, 0.08];
 // TODO const defaultRange = [0.005, 0.01, 0.03, 0.06];
@@ -11,7 +11,7 @@ export async function simplifyGeometryByAppearanceLOD(geometry: BufferGeometry, 
   let startRatio = 1;
 
   for (let i = 0; i < LODCount; i++) {
-    const result = await simplifyGeometryByAppearance(geometry, range[i], startRatio);
+    const result = await simplifyGeometryByError(geometry, range[i], startRatio);
     startRatio = result.ratio;
     console.log(`LOD ${i} - ratio ${result.ratio} - appearanceError ${result.appearanceError} - indexCount: ${result.geometry.index!.count}`);
     geometries.push(result.geometry);
