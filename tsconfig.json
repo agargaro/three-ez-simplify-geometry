@@ -11,7 +11,7 @@
     "noImplicitReturns": true,
     "outDir": "dist/src",
     "paths": {
-      "@three.ez/package-name": [
+      "@three.ez/simplify-geometry": [
         "./src/index.js"
       ]
     },

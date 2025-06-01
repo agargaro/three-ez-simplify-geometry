@@ -1,5 +1,5 @@
 {
-  "name": "@three.ez/package-name",
+  "name": "@three.ez/simplify-geometry",
   "version": "0.0.0",
   "description": "",
   "author": "Andrea Gargaro <devgargaro@gmail.com>",
@@ -9,7 +9,7 @@
   "main": "build/index.cjs",
   "types": "src/index.d.ts",
   "homepage": "",
-  "repository": "https://github.com/agargaro/package-name",
+  "repository": "https://github.com/agargaro/simplify-geometry",
   "exports": {
     ".": {
       "import": {
@@ -48,6 +48,7 @@
     "vite-plugin-static-copy": "^3.0.0"
   },
   "peerDependencies": {
+    "meshoptimizer": ">=0.23.0",
     "three": ">=0.159.0"
   }
 }
