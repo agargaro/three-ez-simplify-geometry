@@ -1,6 +1,6 @@
 {
   "name": "@three.ez/simplify-geometry",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "author": "Andrea Gargaro <devgargaro@gmail.com>",
   "license": "MIT",
@@ -51,8 +51,10 @@
     "vite-plugin-externalize-deps": "^0.9.0",
     "vite-plugin-static-copy": "^3.0.0"
   },
+  "dependencies": {
+    "meshoptimizer": "^0.23.0"
+  },
   "peerDependencies": {
-    "meshoptimizer": ">=0.23.0",
     "three": ">=0.159.0"
   }
 }
