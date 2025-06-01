@@ -1,33 +1,27 @@
 import { BufferGeometry } from 'three';
 import { simplifyGeometryByError } from './SimplifyGeometryByError.js';
 
-// TODO make more range preset // export const defaultRange = [0.01, 0.02, 0.04, 0.08];
-// TODO const defaultRange = [0.005, 0.01, 0.03, 0.06];
-// const defaultRange = [0.005, 0.01, 0.035, 0.07];
-const defaultRange = [0.005, 0.01, 0.04, 0.08];
+// export const performanceLOD = [0.005, 0.012, 0.04, 0.08];
+export const balancedLOD = [0.005, 0.01, 0.04, 0.08];
+// export const qualityLOD = [0.003, 0.008, 0.03, 0.08];
 
-export async function simplifyGeometryByAppearanceLOD(geometry: BufferGeometry, LODCount: number, range = defaultRange): Promise<BufferGeometry[]> {
+export async function simplifyGeometryByErrorLOD(geometry: BufferGeometry, LODCount: number, range = balancedLOD): Promise<BufferGeometry[]> {
   const geometries: BufferGeometry[] = [geometry];
-  let startRatio = 1;
 
   for (let i = 0; i < LODCount; i++) {
-    const result = await simplifyGeometryByError(geometry, range[i], startRatio);
-    startRatio = result.ratio;
-    console.log(`LOD ${i} - ratio ${result.ratio} - appearanceError ${result.appearanceError} - indexCount: ${result.geometry.index!.count}`);
-    geometries.push(result.geometry);
+    geometries.push(await simplifyGeometryByError(geometry, range[i]));
   }
 
   return geometries;
 }
 
-export async function simplifyGeometriesByAppearanceLOD(geometries: BufferGeometry[], LODCounts: number | number[], ranges: number[] | number[][] = defaultRange): Promise<BufferGeometry[][]> {
+export async function simplifyGeometriesByErrorLOD(geometries: BufferGeometry[], LODCounts: number | number[], ranges: number[] | number[][] = balancedLOD): Promise<BufferGeometry[][]> {
   const result: BufferGeometry[][] = [];
 
   for (let i = 0; i < geometries.length; i++) {
-    console.log(`Geometry ${i} - index count: ${geometries[i].index!.count}`);
     const range = (Array.isArray(ranges[i]) ? ranges[i] : ranges) as number[];
     const LODCount = Array.isArray(LODCounts) ? LODCounts[i] : LODCounts;
-    result.push(await simplifyGeometryByAppearanceLOD(geometries[i], LODCount, range));
+    result.push(await simplifyGeometryByErrorLOD(geometries[i], LODCount, range));
   }
 
   return result;

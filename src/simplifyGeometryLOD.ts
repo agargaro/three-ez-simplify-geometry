@@ -3,13 +3,13 @@ import { SimplifyParams } from './Simplify.js';
 import { simplifyGeometry } from './SimplifyGeometry.js';
 
 export async function simplifyGeometryLOD(geometry: BufferGeometry, paramsList: SimplifyParams[]): Promise<BufferGeometry[]> {
-  const result: BufferGeometry[] = [geometry];
+  const geometries: BufferGeometry[] = [geometry];
 
   for (const params of paramsList) {
-    result.push(await simplifyGeometry(geometry, params));
+    geometries.push(await simplifyGeometry(geometry, params));
   }
 
-  return result;
+  return geometries;
 }
 
 export async function simplifyGeometriesLOD(geometries: BufferGeometry[], paramsList: SimplifyParams[] | SimplifyParams[][]): Promise<BufferGeometry[][]> {

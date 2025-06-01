@@ -16,12 +16,12 @@ export async function simplifyGeometry(geometry: BufferGeometry, params: Simplif
 }
 
 export async function simplifyGeometries(geometries: BufferGeometry[], paramsList: SimplifyParams | SimplifyParams[]): Promise<BufferGeometry[]> {
-  const promises: Promise<BufferGeometry>[] = new Array(geometries.length);
+  const result: BufferGeometry[] = new Array(geometries.length);
 
   for (let i = 0; i < geometries.length; i++) {
     const params = Array.isArray(paramsList) ? paramsList[i] : paramsList;
-    promises[i] = simplifyGeometry(geometries[i], params);
+    result[i] = await simplifyGeometry(geometries[i], params);
   }
 
-  return await Promise.all(promises);
+  return result;
 }

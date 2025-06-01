@@ -1,39 +1,18 @@
-import { Main, PerspectiveCameraAuto } from '@three.ez/main';
-import { simplifyGeometries, SimplifyParams } from '@three.ez/simplify-geometry';
-import { AmbientLight, DirectionalLight, Mesh, MeshNormalMaterial, Scene, TorusKnotGeometry } from 'three';
-import { OrbitControls } from 'three/examples/jsm/Addons.js';
+import { Asset, Main, PerspectiveCameraAuto } from '@three.ez/main';
+import { simplifyGeometry, SimplifyParams } from '@three.ez/simplify-geometry';
+import { AmbientLight, DirectionalLight, Mesh, Scene, TorusKnotGeometry } from 'three';
+import { GLTF, GLTFLoader, OrbitControls } from 'three/examples/jsm/Addons.js';
 import { Pane } from 'tweakpane';
 
 const main = new Main();
-const scene = new Scene().activeSmartRendering();
-const camera = new PerspectiveCameraAuto(50).translateZ(20);
-const controls = new OrbitControls(camera, main.renderer.domElement);
-controls.update();
 
-scene.add(new AmbientLight());
-const dirLight = new DirectionalLight('white', 2);
-camera.add(dirLight, dirLight.target);
+const glb = await Asset.load<GLTF>(GLTFLoader, 'https://threejs.org/examples/models/gltf/Soldier.glb');
+const soldierGroup = glb.scene.children[0];
+const dummy = soldierGroup.children[0] as Mesh;
 
-const meshes: Mesh[] = [];
-const material = new MeshNormalMaterial();
-const originalGeometries = [
-  new TorusKnotGeometry(1, 0.4, 256, 32, 1, 1),
-  new TorusKnotGeometry(1, 0.4, 256, 32, 1, 2),
-  new TorusKnotGeometry(1, 0.4, 256, 32, 1, 3),
-  new TorusKnotGeometry(1, 0.4, 256, 32, 1, 4),
-  new TorusKnotGeometry(1, 0.4, 256, 32, 1, 5),
-  new TorusKnotGeometry(1, 0.4, 256, 32, 2, 1),
-  new TorusKnotGeometry(1, 0.4, 256, 32, 2, 3),
-  new TorusKnotGeometry(1, 0.4, 256, 32, 3, 1),
-  new TorusKnotGeometry(1, 0.4, 256, 32, 4, 1)
-];
-
-for (let i = 0; i < originalGeometries.length; i++) {
-  const mesh = new Mesh(originalGeometries[i], material);
-  mesh.position.set(i % 3 * 5 - 5, Math.floor(i / 3) * 5 - 5, 0);
-  scene.add(mesh);
-  meshes.push(mesh);
-}
+const originalGeometry = dummy.geometry.rotateX(Math.PI / -2).rotateY(Math.PI);
+const mesh = new Mesh(originalGeometry, dummy.material);
+mesh.scale.divideScalar(40);
 
 const params: SimplifyParams = {
   ratio: 0,
@@ -42,7 +21,7 @@ const params: SimplifyParams = {
   lockBorder: false,
   prune: false,
   sparse: false,
-  logAppearanceError: false
+  logAppearanceError: true
 };
 
 const pane = new Pane();
@@ -54,15 +33,17 @@ pane.addBinding(params, 'lockBorder');
 pane.addBinding(params, 'prune');
 pane.addBinding(params, 'sparse');
 
-async function onChange(): Promise<void> {
-  console.time('simplifyGeometries');
-  const geometries = await simplifyGeometries(originalGeometries, params);
-  console.timeEnd('simplifyGeometries');
+const scene = new Scene().add(mesh).activeSmartRendering();
+const camera = new PerspectiveCameraAuto(50).translateZ(10);
+const controls = new OrbitControls(camera, main.renderer.domElement);
+controls.update();
+main.createView({ scene, camera });
 
-  for (let i = 0; i < originalGeometries.length; i++) {
-    meshes[i].geometry = geometries[i];
-  }
+async function onChange(): Promise<void> {
+  mesh.geometry = await simplifyGeometry(originalGeometry, params) as TorusKnotGeometry;
   scene.needsRender = true;
 }
 
-main.createView({ scene, camera });
+scene.add(new AmbientLight());
+const dirLight = new DirectionalLight('white', 2);
+camera.add(dirLight, dirLight.target);

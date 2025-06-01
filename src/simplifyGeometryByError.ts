@@ -1,51 +1,17 @@
-import { BufferAttribute, BufferGeometry } from 'three';
-import { simplify, SimplifyParams } from './Simplify.js';
+import { BufferGeometry } from 'three';
+import { simplifyGeometry } from './SimplifyGeometry.js';
 
-export type SimplifyGeometryAuto = { geometry: BufferGeometry; ratio: number; appearanceError: number };
+export async function simplifyGeometryByError(geometry: BufferGeometry, appearanceError: number): Promise<BufferGeometry> {
+  return simplifyGeometry(geometry, { ratio: 0, error: appearanceError });
+}
 
-export async function simplifyGeometryByError(geometry: BufferGeometry, appearance: number, start: number, min = 0, threshold = 0.01, maxIteration = 12): Promise<SimplifyGeometryAuto> {
-  if (!geometry.index) throw new Error('simplifyGeometry: non-indexed geometries are not currently supported.');
-  if (geometry.groups.length > 0) throw new Error('simplifyGeometry: geometry groups are not currently supported.');
+export async function simplifyGeometriesByError(geometries: BufferGeometry[], appearanceErrorList: number | number[]): Promise<BufferGeometry[]> {
+  const result: BufferGeometry[] = new Array(geometries.length);
 
-  const dstGeometry = geometry.clone();
-  const srcIndexArray = geometry.index.array as Uint32Array;
-  const srcPositionArray = geometry.attributes.position.array as Float32Array;
-  const appearanceThreshold = appearance * threshold;
-  const params: SimplifyParams = { ratio: 1 };
-  let bestTolerance = Infinity;
-  let bestAppearanceError = Infinity;
-  let bestRatio = -1;
-  let bestArray = srcIndexArray;
-
-  for (let i = 0; i < maxIteration; i++) {
-    if (start - min < 0.0005) break; // TODO check if this is worth
-
-    params.ratio = (min + start) / 2;
-    const [dstIndexArray, appearanceError] = await simplify(srcIndexArray, srcPositionArray, params);
-
-    const tolerance = Math.abs(appearanceError - appearance);
-    if (tolerance <= bestTolerance) {
-      bestTolerance = tolerance;
-      bestAppearanceError = appearanceError;
-      bestRatio = params.ratio;
-      bestArray = dstIndexArray as Uint32Array;
-    }
-
-    if (tolerance <= appearanceThreshold) break;
-
-    if (appearanceError > appearance) {
-      min = params.ratio;
-    } else {
-      start = params.ratio;
-    }
+  for (let i = 0; i < geometries.length; i++) {
+    const appearanceError = Array.isArray(appearanceErrorList) ? appearanceErrorList[i] : appearanceErrorList;
+    result[i] = await simplifyGeometryByError(geometries[i], appearanceError);
   }
 
-  if (bestArray.length === srcIndexArray.length) {
-    console.error('SimplifyByAppearanceError: simplification failed');
-  } else if (bestTolerance > appearanceThreshold) { // TODO remove?
-    console.warn('SimplifyByAppearanceError: simplification failed to converge to the appearance error. The best result is used instead.');
-  }
-
-  dstGeometry.index = new BufferAttribute(bestArray, 1);
-  return { geometry: dstGeometry, appearanceError: bestAppearanceError, ratio: bestRatio };
+  return result;
 }
