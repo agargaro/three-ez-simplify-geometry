@@ -1,5 +1,5 @@
 import { BufferGeometry } from 'three';
-import { simplifyGeometryByError } from './aSimplifyGeometryByError.js';
+import { simplifyGeometryByError } from './SimplifyGeometryByError.js';
 
 // export const performanceLOD = [0.005, 0.012, 0.04, 0.08];
 export const balancedLOD = [0.005, 0.01, 0.04, 0.08];
